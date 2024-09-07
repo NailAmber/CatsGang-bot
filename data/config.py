@@ -1,11 +1,14 @@
 # api id, hash
-API_ID = 1488
-API_HASH = 'abcde1488'
+API_ID = 21421214
+API_HASH = 'asafasfasf'
 
 DELAYS = {
     'ACCOUNT': [5, 15],  # delay between connections to accounts (the more accounts, the longer the delay)
     'TASK':  [5, 10],  # delay after complete task
 }
+
+# For example 'FUOM_I_3mNrbplFo4EUEj'
+REFS = ['FUOM_I_3mNrbplFo4EUEj']
 
 PROXY = {
     "USE_PROXY_FROM_FILE": False,  # True - if use proxy from file, False - if use proxy from accounts.json

@@ -27,6 +27,20 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
         logger.error(f"Thread {thread} | {account} | Couldn't login")
         await cats.logout()
         return
+    
+    try:
+        await cats.client.connect()
+        await cats.client.join_chat('starsmajor')
+        await asyncio.sleep(1)
+        await cats.client.join_chat('activitylauncher_offical')
+        await asyncio.sleep(1)
+        await cats.client.join_chat('baks_ton')
+        await asyncio.sleep(1)
+        await cats.client.join_chat('Cats_housewtf')
+        await cats.client.disconnect()
+    except:
+        logger.error(f"Cats | Thread {thread} | {account} | Cant subscribe")
+    await asyncio.sleep(2)
 
     for task in await cats.get_tasks():
         if task['completed']: continue
