@@ -1,6 +1,7 @@
 # CatsGang-bot
 Soft for https://t.me/catsgang_bot
 
+Forked by Nailambe. Added subscribe tasks and Ref system in config: You can add list of your ref links for auto reffering
 More crypto themes and softs in telegram: [ApeCryptor](https://t.me/+_xCNXumUNWJkYjAy "ApeCryptor") 🦧
 
 ## Functionality
