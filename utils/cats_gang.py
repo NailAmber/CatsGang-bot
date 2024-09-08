@@ -90,12 +90,12 @@ class CatsGang:
         return (await resp.json()).get('tasks')
 
     async def register(self):
-        resp = await self.session.post(f'https://cats-backend-cxblew-prod.up.railway.app/user/create?referral_code=9uGLmLKtMc2ut8Kl8F-YH')
+        resp = await self.session.post(f'https://cats-backend-cxblew-prod.up.railway.app/user/create?referral_code={self.ref}')
         return resp.status == 200
 
     async def login(self):
         await asyncio.sleep(random.uniform(*config.DELAYS['ACCOUNT']))
-        self.ref = '9uGLmLKtMc2ut8Kl8F-YH'
+        self.ref = self.ref
         query = await self.get_tg_web_data()
 
         if query is None:
