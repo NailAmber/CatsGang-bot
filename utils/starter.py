@@ -42,6 +42,10 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
         logger.error(f"Cats | Thread {thread} | {account} | Cant subscribe")
     await asyncio.sleep(2)
 
+
+    await cats.change_Nickname()
+    await asyncio.sleep(2)
+    await cats.nickname_task()
     for task in await cats.get_tasks():
         if task['completed']: continue
 
@@ -61,6 +65,7 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
             continue
         await asyncio.sleep(random.uniform(*config.DELAYS['TASK']))
 
+    
     await cats.logout()
 
 

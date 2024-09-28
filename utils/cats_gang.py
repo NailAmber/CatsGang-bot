@@ -84,9 +84,37 @@ class CatsGang:
             return (await resp.json()).get('success')
         except:
             return False
+        
+    async def change_Nickname(self):
+        try:
+            await self.client.connect()
+            user = await self.client.get_me()
+            
+            if '🐈‍⬛' not in user.first_name:
+                await self.client.update_profile(first_name=f"{user.first_name}🐈‍⬛")
+            
+            await self.client.disconnect()
+        except:
+            return None
+        
+    async def nickname_task(self):
+        try:
+            resp = await self.session.post("https://api.catshouse.club/tasks/104/check")
+            resp = await self.session.post("https://api.catshouse.club/tasks/104/complete")
+
+            logger.success(f"Thread {self.thread} | {self.account} | Complete task «Change nickname» + 300")
+        except:
+            logger.warning(f"Thread {self.thread} | {self.account} | Couldn't complete task «Change nickname»")
+        
 
     async def get_tasks(self):
-        resp = await self.session.get('https://cats-backend-cxblew-prod.up.railway.app/tasks/user?group=cats')
+        status = False
+        while status == False:
+            resp = await self.session.get('https://cats-backend-cxblew-prod.up.railway.app/tasks/user?group=cats')
+            if resp.status != 200:    
+                logger.warning(f"Thread {self.thread} | {self.account} | Couldn't get task list, error {resp.status}, trying again...")
+            else:
+                status = True
         return (await resp.json()).get('tasks')
 
     async def register(self):
