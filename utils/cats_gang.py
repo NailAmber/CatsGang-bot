@@ -47,11 +47,11 @@ class CatsGang:
         await self.login()
 
         user = await self.user()
-        balance = str(user.get('totalRewards'))
+        # balance = str(user.get('totalRewards'))
         referral_link = f"https://t.me/catsgang_bot/join?startapp={user.get('referrerCode')}"
 
-        r = await (await self.session.get('https://cats-backend-cxblew-prod.up.railway.app/leaderboard')).json()
-        leaderboard = r.get('userPlace')
+        r = await (await self.session.get('https://api.catshouse.club/user')).json()
+        balance = r.get('totalRewards')
 
         await self.logout()
 
@@ -62,7 +62,7 @@ class CatsGang:
 
         proxy = self.proxy.replace('http://', "") if self.proxy is not None else '-'
 
-        return [phone_number, name, balance, leaderboard, referral_link, proxy]
+        return [phone_number, name, balance, referral_link, proxy]
 
     async def user(self):
         resp = await self.session.get('https://cats-backend-cxblew-prod.up.railway.app/user')
@@ -73,16 +73,45 @@ class CatsGang:
 
     async def check_task(self, task_id: int):
         try:
-            resp = await self.session.post(f'https://cats-backend-cxblew-prod.up.railway.app/tasks/{task_id}/check')
+            resp = await self.session.post(f'https://api.catshouse.club/tasks/{task_id}/check')
             return (await resp.json()).get('completed')
         except:
             return False
-
-    async def complete_task(self, task_id: int):
+        
+    async def subs_for_tasks(self):
         try:
-            resp = await self.session.post(f'https://cats-backend-cxblew-prod.up.railway.app/tasks/{task_id}/complete')
+            await self.client.connect()
+            await self.client.join_chat('seedupdates')
+            await asyncio.sleep(1)
+            await self.client.join_chat('starsmajor')
+            await asyncio.sleep(2)
+            await self.client.join_chat('okx_ru')
+            await asyncio.sleep(1)
+            await self.client.join_chat('memeficlub')
+            await asyncio.sleep(1)
+            await self.client.join_chat('baks_ton')
+            await asyncio.sleep(1)
+            await self.client.join_chat('activitylauncher_offical')
+            await asyncio.sleep(2)
+            await self.client.join_chat('Cats_housewtf')
+            await asyncio.sleep(1)
+            await self.client.join_chat('baks_ton')
+            await self.client.disconnect()
+        except:
+            logger.error(f"Cats | Thread {self.thread} | {self.account} | error")
+
+    async def complete_task(self, task_id: int, task):
+        if '?' in task['params']['linkUrl']:
+            app = task['params']['linkUrl'].split('?')[0].split('/')[3]
+            short = task['params']['linkUrl'].split('?')[1].split('=')[0]
+            ref = task['params']['linkUrl'].split('?')[1].split('=')[1]
+            await self.join_app_task(app,short,ref)
+            await asyncio.sleep(1)
+        try:
+            resp = await self.session.post(f'https://api.catshouse.club/tasks/{task_id}/complete')
             return (await resp.json()).get('success')
         except:
+            logger.error(f"Thread {self.thread} | {self.account} | Can't complete task {task_id}, error {resp.status}")
             return False
         
     async def change_Nickname(self):
@@ -110,15 +139,16 @@ class CatsGang:
     async def get_tasks(self):
         status = False
         while status == False:
-            resp = await self.session.get('https://cats-backend-cxblew-prod.up.railway.app/tasks/user?group=cats')
+            resp = await self.session.get('https://api.catshouse.club/tasks/user?group=cats')
             if resp.status != 200:    
                 logger.warning(f"Thread {self.thread} | {self.account} | Couldn't get task list, error {resp.status}, trying again...")
+                await asyncio.sleep(2)
             else:
                 status = True
         return (await resp.json()).get('tasks')
 
     async def register(self):
-        resp = await self.session.post(f'https://cats-backend-cxblew-prod.up.railway.app/user/create?referral_code={self.ref}')
+        resp = await self.session.post(f'https://api.catshouse.club/user/create?referral_code={self.ref}')
         return resp.status == 200
 
     async def login(self):
@@ -133,10 +163,25 @@ class CatsGang:
 
         self.session.headers['Authorization'] = 'tma ' + query
 
-        r = await (await self.session.get('https://cats-backend-cxblew-prod.up.railway.app/user')).text()
+        r = await (await self.session.get('https://api.catshouse.club/user')).text()
         if r == '{"name":"Error","message":"User was not found"}':
             if await self.register():
                 logger.success(f"Thread {self.thread} | {self.account} | Register")
+
+    async def join_app_task(self, app, short, ref):
+        try:
+            await self.client.connect()
+
+            web_view = await self.client.invoke(RequestAppWebView(
+                peer=await self.client.resolve_peer(app),
+                app=InputBotAppShortName(bot_id=await self.client.resolve_peer(app), short_name=short),
+                platform='android',
+                write_allowed=True,
+                start_param=ref
+            ))
+            await self.client.disconnect()
+        except:
+            return None
 
     async def get_tg_web_data(self):
         try:

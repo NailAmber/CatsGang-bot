@@ -12,7 +12,7 @@ import os
 async def start(thread: int, session_name: str, phone_number: str, proxy: [str, None]):
     cats = CatsGang(session_name=session_name, phone_number=phone_number, thread=thread, proxy=proxy)
     account = session_name + '.session'
-
+    await asyncio.sleep(random.uniform(2, 20))
     attempts = 3
     while attempts:
         try:
@@ -30,17 +30,14 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
     
     try:
         await cats.client.connect()
-        await cats.client.join_chat('starsmajor')
-        await asyncio.sleep(1)
-        await cats.client.join_chat('activitylauncher_offical')
-        await asyncio.sleep(1)
-        await cats.client.join_chat('baks_ton')
         await asyncio.sleep(1)
         await cats.client.join_chat('Cats_housewtf')
         await cats.client.disconnect()
     except:
         logger.error(f"Cats | Thread {thread} | {account} | Cant subscribe")
     await asyncio.sleep(2)
+
+    await cats.subs_for_tasks()
 
 
     await cats.change_Nickname()
@@ -50,7 +47,7 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
         if task['completed']: continue
 
         if task['type'] == 'OPEN_LINK':
-            if await cats.complete_task(task_id=task['id']):
+            if await cats.complete_task(task_id=task['id'], task=task):
                 logger.success(f"Thread {thread} | {account} | Completed task «{task['title']}» and got {task['rewardPoints']} CATS")
             else:
                 logger.warning(f"Thread {thread} | {account} | Couldn't complete task «{task['title']}»")
@@ -79,7 +76,7 @@ async def stats():
 
     data = await asyncio.gather(*tasks)
     path = f"statistics/statistics_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv"
-    columns = ['Phone number', 'Name', 'balance', 'leaderboard', 'referral_link', 'Proxy (login:password@ip:port)']
+    columns = ['Phone number', 'Name', 'balance', 'referral_link', 'Proxy (login:password@ip:port)']
 
     if not os.path.exists('statistics'): os.mkdir('statistics')
     df = pd.DataFrame(data, columns=columns)
