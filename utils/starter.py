@@ -40,13 +40,17 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
     await cats.subs_for_tasks()
 
 
-    await cats.change_Nickname()
+    
     await asyncio.sleep(2)
-    await cats.nickname_task()
+    
     for task in await cats.get_tasks():
         if task['completed']: continue
 
-        if task['type'] == 'OPEN_LINK':
+        if task['id'] == 104:
+            await cats.change_Nickname()
+            await cats.nickname_task()
+
+        if task['type'] == 'OPEN_LINK' or task['type'] == 'YOUTUBE_WATCH':
             if await cats.complete_task(task_id=task['id'], task=task):
                 logger.success(f"Thread {thread} | {account} | Completed task «{task['title']}» and got {task['rewardPoints']} CATS")
             else:

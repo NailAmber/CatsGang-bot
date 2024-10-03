@@ -101,17 +101,77 @@ class CatsGang:
             logger.error(f"Cats | Thread {self.thread} | {self.account} | error")
 
     async def complete_task(self, task_id: int, task):
-        if '?' in task['params']['linkUrl']:
-            app = task['params']['linkUrl'].split('?')[0].split('/')[3]
-            short = task['params']['linkUrl'].split('?')[1].split('=')[0]
-            ref = task['params']['linkUrl'].split('?')[1].split('=')[1]
-            await self.join_app_task(app,short,ref)
-            await asyncio.sleep(1)
+        
         try:
+            if task['type'] == 'YOUTUBE_WATCH':
+                try:
+                    if task['id'] == 141:
+                        json_data = {}
+                        response = await self.session.post(f'https://api.catshouse.club/tasks/141/complete?answer=dildo', json=json_data)
+                        resp = await response.json()
+                        if resp['success']:
+                            logger.success(f"do_task | Thread {self.thread} | {self.account} | Claim task (dildo) YOUTUBE")
+                        else:
+                            logger.error(f"do_task | Thread {self.thread} | {self.account} | task (dildo) YOUTUBE {resp}")
+                            
+                    elif task['id'] == 153:
+                        json_data = {}
+                        response = await self.session.post(f'https://api.catshouse.club/tasks/153/complete?answer=ABSTRACT', json=json_data)
+                        resp = await response.json()
+                        if resp['success']:
+                            logger.success(f"do_task | Thread {self.thread} | {self.account} | Claim task (ABSTRACT) YOUTUBE")
+                        else:
+                            logger.error(f"do_task | Thread {self.thread} | {self.account} | task (ABSTRACT) YOUTUBE {resp}")
+                        
+                    elif task['id'] == 146:
+                        json_data = {}
+                        response = await self.session.post(f'https://api.catshouse.club/tasks/146/complete?answer=dip', json=json_data)
+                        resp = await response.json()
+                        if resp['success']:
+                            logger.success(f"do_task | Thread {self.thread} | {self.account} | Claim task (dip) YOUTUBE")
+                        else:
+                            logger.error(f"do_task | Thread {self.thread} | {self.account} | task (dip) YOUTUBE {resp}")
+                    
+                    elif task['id'] == 148:
+                        json_data = {}
+                        response = await self.session.post(f'https://api.catshouse.club/tasks/148/complete?answer=AIRNODE', json=json_data)
+                        resp = await response.json()
+                        if resp['success']:
+                            logger.success(f"do_task | Thread {self.thread} | {self.account} | Claim task (AIRNODE) YOUTUBE")
+                        else:
+                            logger.error(f"do_task | Thread {self.thread} | {self.account} | task (AIRNODE) YOUTUBE {resp}")
+                    
+                    elif task['id'] == 149:
+                        json_data = {}
+                        response = await self.session.post(f'https://api.catshouse.club/tasks/149/complete?answer=WEI', json=json_data)
+                        resp = await response.json()
+                        if resp['success']:
+                            logger.success(f"do_task | Thread {self.thread} | {self.account} | Claim task (WEI) YOUTUBE")
+                        else:
+                            logger.error(f"do_task | Thread {self.thread} | {self.account} | task (WEI) YOUTUBE {resp}")
+                except Exception as err:
+                    logger.error(f"tasks | Thread {self.thread} | {self.account} | {err} TASK_ID : {task['id']}")      
+            else:
+                if '?' in task['params']['linkUrl']:
+                    app = task['params']['linkUrl'].split('?')[0].split('/')[3]
+                    short = task['params']['linkUrl'].split('?')[1].split('=')[0]
+                    ref = task['params']['linkUrl'].split('?')[1].split('=')[1]
+                    await self.join_app_task(app,short,ref)
+                    await asyncio.sleep(1)
+                try:
+                    json_data = {}
+                    response = await self.session.post(f'https://api.catshouse.club/tasks/{task["id"]}/complete', json=json_data)
+                    resp = await response.json()
+                    if resp['success']:
+                        logger.success(f"do_task | Thread {self.thread} | {self.account} | Claim task {task['title']}")
+                    else:
+                        logger.error(f"do_task | Thread {self.thread} | {self.account} | task {task['id']} {resp}")
+                except Exception as err:
+                    logger.error(f"tasks | Thread {self.thread} | {self.account} | {err} TASK_ID : {task['id']}")
             resp = await self.session.post(f'https://api.catshouse.club/tasks/{task_id}/complete')
             return (await resp.json()).get('success')
         except:
-            logger.error(f"Thread {self.thread} | {self.account} | Can't complete task {task_id}, error {resp.status}")
+            logger.error(f"Thread {self.thread} | {self.account} | Can't complete task {task_id}, error")
             return False
         
     async def change_Nickname(self):
